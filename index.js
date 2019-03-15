@@ -1,20 +1,42 @@
 var $start = document.querySelector('#start');
 var $game = document.querySelector('#game');
+var $time = document.querySelector('#time');
 
 var score = 0;
+var isGameStarted = false;
 
 
 $start.addEventListener('click', startGame);
 $game.addEventListener('click', handleClick);
 
 function startGame() {
+  isGameStarted = true;
   $start.classList.add('hide');
   $game.style.backgroundColor = '#fff';
+
+  var interval = setInterval(function () {
+    var time = parseFloat($time.textContent);
+
+    if(time <=0) {
+      clearInterval(interval);
+      endGame();
+    } else {
+      $time.textContent = (time - 0.1).toFixed(1);
+    }
+  }, 100);
 
   renderBox();
 }
 
+function endGame() {
+  isGameStarted = false;
+}
+
 function handleClick(e) {
+  if (!isGameStarted) {
+    return
+  }
+
   if (e.target.dataset.box) {
     score++
     renderBox();
@@ -24,7 +46,7 @@ function handleClick(e) {
 
 function renderBox() {
   $game.innerHTML = '';
-  
+
   var box = document.createElement('div');
   var boxSize = getRandom(20, 100);
   var gameSize = $game.getBoundingClientRect();
